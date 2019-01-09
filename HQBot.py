@@ -51,3 +51,68 @@ with io.open("/Users/azharhussain/Desktop/question.png", 'rb') as image_file:
 	answers = list(filter(None, answers))
 	print(san)
 	print(answers)
+
+
+winningScore = 0
+winningAnswer = ""
+
+
+answerOne = 0
+answerTwo = 0
+answerThree = 0
+
+resultsList = google_results_count(query + " (\"" + answers[0] + "\"|\"" + answers[2] + "\"|\"" + answers[4] + "\")")
+
+for item in resultsList:
+	answerOne += item["htmlSnippet"].count(answers[0])
+	answerTwo += item["htmlSnippet"].count(answers[2])
+	answerThree += item["htmlSnippet"].count(answers[4])
+	print(answers[0] + " SCORE: " + str(answerOne))
+	print(answers[2] + " SCORE: " + str(answerTwo))
+	print(answers[4] + " SCORE: " + str(answerThree))
+
+	if answerOne > winningScore:
+		winningScore = answerOne
+		winningAnswer = "1"
+
+	if answerTwo > winningScore:
+		winningScore = answerTwo
+		winningAnswer = "2"
+
+	if answerThree > winningScore:
+		winningScore = answerThree
+		winningAnswer = "3"
+
+	print("PICK THIS: " + winningAnswer)
+
+if (answerOne + answerTwo + answerThree) < 10:
+	print("confidence low, starting deep search")
+
+	for item in resultsList:
+
+		try:
+			res = urllib.request.urlopen(item["link"])
+			for line in res:
+				output = line.decode('utf-8')
+			# html = res.read()
+				answerOne += output.count(answers[0])
+				answerTwo += output.count(answers[1])
+				answerThree += output.count(answers[2])
+				print(answers[0] + " SCORE: " + str(answerOne))
+				print(answers[1] + " SCORE: " + str(answerTwo))
+				print(answers[2] + " SCORE: " + str(answerThree))
+				if answerOne > winningScore:
+					winningScore = answerOne
+					winningAnswer = "1"
+
+				if answerTwo > winningScore:
+					winningScore = answerTwo
+					winningAnswer = "2"
+
+				if answerThree > winningScore:
+					winningScore = answerThree
+					winningAnswer = "3"
+
+				print("PICK THIS: " + winningAnswer)
+		except:
+			pass
